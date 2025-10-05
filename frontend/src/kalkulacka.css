@@ -1,0 +1,136 @@
+.kalkulacka-container {
+  min-height: 100vh;
+  background-image: url('./images/brooke-lark-08bOYnH_r_E-unsplash.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Arial', sans-serif;
+  padding: 20px;
+}
+
+.kalkulacka-box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 700px;
+  width: 100%;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.kalkulacka-box:hover {
+  transform: translateY(-5px);
+}
+
+.kalkulacka-box h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+  font-size: 28px;
+}
+
+.kalkulacka-box input,
+.kalkulacka-box select {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  transition: border 0.2s ease;
+}
+
+.kalkulacka-box input:focus,
+.kalkulacka-box select:focus {
+  outline: none;
+  border-color: #007BFF;
+}
+
+.kalkulacka-button {
+  background-color: #007BFF;
+  color: white;
+  font-weight: bold;
+  margin: 10px 0;
+  padding: 12px;
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.kalkulacka-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.kalkulacka-error {
+  color: #d93025;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.kalkulacka-result {
+  margin-top: 25px;
+}
+
+.kalkulacka-result h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #007BFF;
+}
+
+.kalkulacka-result h4 {
+  background-color: #f1f5f9;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.kalkulacka-result ul {
+  list-style: none;
+  padding-left: 15px;
+  margin-bottom: 15px;
+}
+
+.kalkulacka-result li {
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.kalkulacka-result li:last-child {
+  border-bottom: none;
+}
+
+.kalkulacka-shopping-list {
+  margin-top: 25px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.kalkulacka-shopping-list h3 {
+  margin-bottom: 15px;
+  color: #007BFF;
+  text-align: center;
+}
+
+.kalkulacka-shopping-list ul {
+  list-style: none;
+  padding-left: 10px;
+}
+
+.kalkulacka-shopping-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.kalkulacka-shopping-list li:last-child {
+  border-bottom: none;
+}
