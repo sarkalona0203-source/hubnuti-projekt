@@ -1,39 +1,84 @@
 import React, { useState } from "react";
 import "./kalkulacka.css";
+const INITIAL_FORM = {
+  vaha: "",
+  vyska: "",
+  vek: "",
+  pohlavi: "muz",
+  aktivita: "sedavy",
+};
+
+const dny = ["pondeli", "utery", "streda", "ctvrtek", "patek", "sobota", "nedele"];
+
+const typyMap = {
+  snidane: "Snídaně",
+  druhe_snidane: "Druhá snídaně",
+  obed: "Oběd",
+  svacina: "Svačina",
+  vecere: "Večeře",
+  extra_snack: "Extra snack",
+};
 
 function Kalkulacka() {
-  const [form, setForm] = useState({
-    vaha: "",
-    vyska: "",
-    vek: "",
-    pohlavi: "muz",
-    aktivita: "sedavy",
-  });
-
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [lastForm, setLastForm] = useState(null);
   const [manualCalories, setManualCalories] = useState("");
   const [vysledek, setVysledek] = useState(null);
   const [error, setError] = useState("");
-
-  const dny = ["pondeli", "utery", "streda", "ctvrtek", "patek", "sobota", "nedele"];
-  const jidla = [
-    { key: "snidane", label: "Snídaně" },
-    { key: "druhe_snidane", label: "Druhá snídaně" },
-    { key: "svacina", label: "Svačina" },
-    { key: "obed", label: "Oběd" },
-    { key: "vecere", label: "Večeře" },
-  ];
+  const [openIngredients, setOpenIngredients] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const handleManualChange = (e) => setManualCalories(e.target.value);
 
-  const calculate = async (manual = false) => {
+  const toggleIngredients = (den, index) => {
+    setOpenIngredients((prev) => ({
+      ...prev,
+      [`${den}-${index}`]: !prev[`${den}-${index}`],
+    }));
+  };
+
+  const calculate = async (manual = false, refresh = false, loadSaved = false, save = false) => {
     try {
-      let body = manual ? { manual_calories: manualCalories } : form;
+      setError("");
+      setLoading(true);
 
-      if (manual && !manualCalories) {
-        setError("Zadejte hodnotu kalorií pro ruční výpočet");
+      // 1. Сохранение текущего плана
+      if (save && vysledek) {
+        const res = await fetch("http://127.0.0.1:8000/api/ulozit_z_existujiciho/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(vysledek),
+        });
+        const data = await res.json();
+        if (data.error) setError(data.error);
+        else alert("Plán byl úspěšně uložen.");
         return;
       }
+
+      // 2. Загрузка сохранённого плана
+      if (loadSaved) {
+        const res = await fetch("http://127.0.0.1:8000/api/ulozeny_plan/");
+        const data = await res.json();
+        if (data.error) setError(data.error);
+        else setVysledek(data);
+        return;
+      }
+
+      // 3. Новый расчёт
+      let body = manual ? { manual_calories: manualCalories } : form;
+
+      if (!manual && (!form.vaha || !form.vyska || !form.vek)) {
+        setError("Vyplňte prosím všechny hodnoty.");
+        return;
+      }
+
+      if (manual && !manualCalories) {
+        setError("Zadejte hodnotu kalorií pro ruční výpočet.");
+        return;
+      }
+
+      if (refresh) body.refresh = true;
+      if (save) body.save = true;
 
       const res = await fetch("http://127.0.0.1:8000/api/vypocet/", {
         method: "POST",
@@ -42,18 +87,33 @@ function Kalkulacka() {
       });
 
       const data = await res.json();
-
       if (data.error) {
         setError(data.error);
-        setVysledek(null);
       } else {
         setVysledek(data);
-        setError("");
+        setLastForm(form);
       }
-    } catch {
-      setError("Chyba při spojení s API");
-      setVysledek(null);
+    } catch (e) {
+      console.error(e);
+      setError("Chyba při spojení s API.");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleReturnToForm = () => {
+    setVysledek(null);
+    setForm(lastForm || INITIAL_FORM);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleClearAll = () => {
+    setVysledek(null);
+    setForm(INITIAL_FORM);
+    setManualCalories("");
+    setError("");
+    setLastForm(null);
+    setOpenIngredients({});
   };
 
   return (
@@ -61,6 +121,7 @@ function Kalkulacka() {
       <div className="kalkulacka-box">
         <h2>Kalkulačka hubnutí</h2>
 
+        {/* Formulář */}
         <input type="number" name="vaha" placeholder="Váha (kg)" value={form.vaha} onChange={handleChange} />
         <input type="number" name="vyska" placeholder="Výška (cm)" value={form.vyska} onChange={handleChange} />
         <input type="number" name="vek" placeholder="Věk" value={form.vek} onChange={handleChange} />
@@ -78,36 +139,114 @@ function Kalkulacka() {
           <option value="extra">Extra aktivita</option>
         </select>
 
-        <button className="kalkulacka-button" onClick={() => calculate(false)}>Spočítat podle údajů</button>
+        {/* Tlačítka */}
+        <button className="kalkulacka-button" onClick={() => calculate(false)} disabled={loading}>
+          📊 {loading ? "Počítám..." : "Spočítat podle údajů"}
+        </button>
 
-        <input type="number" placeholder="Kalorie ručně" value={manualCalories} onChange={handleManualChange} />
-        <button className="kalkulacka-button" onClick={() => calculate(true)}>Spočítat ručně</button>
+        <div className="manual-section">
+          <input
+            type="number"
+            value={manualCalories}
+            onChange={(e) => setManualCalories(e.target.value)}
+            placeholder="Zadejte kalorie ručně"
+            className="manual-input"
+          />
+          <button className="kalkulacka-button" onClick={() => calculate(true)} disabled={loading || !manualCalories}>
+            ✏️ {loading ? "Počítám..." : "Spočítat ručně"}
+          </button>
+        </div>
+
+        <button className="kalkulacka-button" onClick={() => calculate(false, true)} disabled={loading}>
+          🔄 Obnovit plán
+        </button>
+
+        <button className="kalkulacka-button" onClick={() => calculate(false, false, false, true)} disabled={loading || !vysledek}>
+          💾 Uložit plán
+        </button>
+
+        <button className="kalkulacka-button" onClick={() => calculate(false, false, true)} disabled={loading}>
+          📋 Zobrazit uložený plán
+        </button>
+
+        {vysledek && (
+          <>
+            <button
+              className="kalkulacka-button"
+              onClick={handleReturnToForm}
+              style={{ backgroundColor: "#4caf50", color: "#fff" }}
+            >
+              ← Zpět k formuláři
+            </button>
+            <button
+              className="kalkulacka-button"
+              onClick={handleClearAll}
+              style={{ backgroundColor: "#9e9e9e", color: "#fff" }}
+            >
+              Vyčistit
+            </button>
+          </>
+        )}
 
         {error && <p className="kalkulacka-error">{error}</p>}
 
+        {/* Výsledek */}
         {vysledek && (
           <div className="kalkulacka-result">
-            <h3>Doporučený denní příjem: {vysledek.kalorie?.Plan_celkem || vysledek.kalorie?.Deficit_500 || vysledek.kalorie?.TDEE} kcal</h3>
+            <h3>Doporučený denní příjem: {vysledek.details?.daily_target ?? "—"} kcal</h3>
 
             {dny.map((den) => {
-              const denneJidla = vysledek.plan?.[den] || [];
-              const dailyCalories = denneJidla.reduce((sum, j) => sum + (j.calories || 0), 0);
+              const denneJidla = vysledek.plan_data?.[den] || [];
+              const dailyCalories = denneJidla.reduce((sum, j) => sum + (Number(j.calories) || 0), 0);
 
               return (
-                <div key={den} style={{ marginBottom: "20px" }}>
-                  <h4>{den.charAt(0).toUpperCase() + den.slice(1)} ({dailyCalories} kcal)</h4>
+                <div key={den} className="denni-plan">
+                  <h4>
+                    {den.charAt(0).toUpperCase() + den.slice(1)} ({dailyCalories} kcal)
+                  </h4>
                   <ul style={{ listStyle: "none", paddingLeft: 0 }}>
-                    {denneJidla.map((j) => (
-                      <li key={j.typ}>
-                        <strong>{j.typ}:</strong> {j.name} ({j.calories} kcal)
-                        {j.ingredients?.length > 0 && (
-                          <ul>
-                            {j.ingredients.map((ing, idx) => (
-                              <li key={idx}>{ing.ingredient_name}: {ing.amount} {ing.unit}</li>
-                            ))}
-                          </ul>
+                    {denneJidla.map((j, i) => (
+                      <li key={i} className="jidlo-item">
+                        <strong>{typyMap[j.type] ?? j.type}:</strong> {j.name} ({j.calories} kcal)
+
+                        {j.obrazek && (
+                          <div className="jidlo-img-box">
+                            <img
+                              src={j.obrazek}
+                              alt={j.name}
+                              className="jidlo-img"
+                              loading="lazy"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "/fallback.jpg"; // fallback image if needed
+                              }}
+                            />
+                          </div>
                         )}
-                        {j.preparation && <p>🍳 {j.preparation}</p>}
+
+                        {j.preparation && <p className="preparation">{j.preparation}</p>}
+
+                        {j.ingredients?.length > 0 && (
+                          <>
+                            <button
+                              onClick={() => toggleIngredients(den, i)}
+                              className="toggle-ingredients"
+                            >
+                              {openIngredients[`${den}-${i}`]
+                                ? "🔽 Skrýt ingredience"
+                                : "🔽 Zobrazit ingredience"}
+                            </button>
+                            {openIngredients[`${den}-${i}`] && (
+                              <ul className="ingredients-list">
+                                {j.ingredients.map((ing, idx) => (
+                                  <li key={idx}>
+                                    {ing.name} – {ing.amount} {ing.unit}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -115,13 +254,14 @@ function Kalkulacka() {
               );
             })}
 
-            {vysledek.nakupni_seznam && (
-              <div className="kalkulacka-shopping-list">
+            {/* 🛒 Nákupní seznam */}
+            {vysledek.shopping_list?.length > 0 && (
+              <div className="nakupni-seznam">
                 <h3>🛒 Nákupní seznam</h3>
-                <ul>
-                  {vysledek.nakupni_seznam.map((item, idx) => (
-                    <li key={idx}>
-                      {item.ingredient__name}: {item.total_amount} {item.ingredient__unit}
+                <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+                  {vysledek.shopping_list.map((item, i) => (
+                    <li key={i}>
+                      {item.ingredient__name} – {item.total_amount} {item.ingredient__unit}
                     </li>
                   ))}
                 </ul>

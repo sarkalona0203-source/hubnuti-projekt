@@ -30,11 +30,18 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 class JidloSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientSerializer(many=True, read_only=True)
-
+    obrazek = serializers.SerializerMethodField()  # добавили поле
 
     class Meta:
         model = Jidlo
-        fields = ["id", "name", "calories", "protein", "fat", "carbs", "preparation", "ingredients"]
+        fields = ["id", "name", "type", "calories", "protein", "fat", "carbs",
+                  "preparation", "ingredients", "obrazek"]
+
+    def get_obrazek(self, obj):
+        request = self.context.get("request")
+        if obj.obrazek:
+            return request.build_absolute_uri(obj.obrazek.url) if request else obj.obrazek.url
+        return None
 
 
 class MealItemSerializer(serializers.ModelSerializer):

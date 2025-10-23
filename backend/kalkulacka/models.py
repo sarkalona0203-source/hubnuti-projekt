@@ -1,4 +1,6 @@
 from django.db import models
+from PIL import Image
+import os
 
 class Ingredient(models.Model):
     CATEGORY_CHOICES = [
@@ -41,6 +43,18 @@ class Jidlo(models.Model):
     carbs = models.FloatField(default=0.0, editable=False)
     type = models.CharField(max_length=20, choices=TYPY)
     preparation = models.TextField()
+    obrazek = models.ImageField(upload_to='jidla/', blank=True, null=True)  # <---
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.obrazek:
+            img_path = self.obrazek.path
+            with Image.open(img_path) as img:
+                max_size = (800, 800)  # 🔹 максимум 800x800 пикселей
+                img.thumbnail(max_size)
+                img.save(img_path, quality=80, optimize=True)
+
 
     def recalc_macros_and_calories(self):
         kcal = protein = fat = carbs = 0.0
@@ -64,6 +78,7 @@ class RecipeIngredient(models.Model):
     jidlo = models.ForeignKey(Jidlo, on_delete=models.CASCADE, related_name="ingredients")
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     amount = models.FloatField()
+    unit = models.CharField(max_length=20, default="g")  # ← добавляем поле
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -80,6 +95,7 @@ class RecipeIngredient(models.Model):
 class MealPlan(models.Model):
     name = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
+    data = models.JSONField(null=True, blank=True)
 
     def total_macros(self):
         kcal = protein = fat = carbs = 0.0
@@ -107,3 +123,4 @@ class MealItem(models.Model):
 
     def __str__(self):
         return f"{self.day.title()} - {self.type} - {self.jidlo.name} x {self.quantity}"
+
