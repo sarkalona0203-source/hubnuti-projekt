@@ -4,8 +4,10 @@ from django.db.models import Sum
 
 class Command(BaseCommand):
     help = "Vygeneruje pevný týdenní jídelní plán s nákupním seznamem"
+
     def handle(self, *args, **kwargs):
         DNY = ["pondeli", "utery", "streda", "ctvrtek", "patek", "sobota", "nedele"]
+
         # Комбинации по дням
         KOMBINACE_DNU = {
             "kombinace_A": ["pondeli", "utery", "ctvrtek"],
@@ -13,12 +15,14 @@ class Command(BaseCommand):
             "kombinace_C": ["sobota", "nedele"],
         }
         day_to_combo = {d: k for k, v in KOMBINACE_DNU.items() for d in v}
+
         # Загружаем блюда
         snidane = list(Jidlo.objects.filter(type="snidane"))
         druhe_snidane = list(Jidlo.objects.filter(type="druhe_snidane"))
         obedy = list(Jidlo.objects.filter(type="obed"))
         svaciny = list(Jidlo.objects.filter(type="svacina"))
         vecere = list(Jidlo.objects.filter(type="vecere"))
+        snack_extra = list(Jidlo.objects.filter(type="snack_extra"))
 
         if not (snidane and druhe_snidane and obedy and svaciny and vecere):
             self.stdout.write(self.style.ERROR("❌ Chybí jídla v databázi!"))
@@ -47,12 +51,18 @@ class Command(BaseCommand):
             sn = snidane[0]
             ds = druhe_snidane[0]
             sv = svaciny[0]
+            sx = snack_extra[0] if snack_extra else None
 
+            # Подсчёт калорий (с учётом дополнительного перекуса)
             denni_kalorie = sn.calories + ds.calories + obed.calories + sv.calories + vecere_item.calories
+            if sx:
+                denni_kalorie += sx.calories
+
             tydenni_kalorie += denni_kalorie
 
             # Собираем ингредиенты
-            for jidlo in [sn, ds, obed, sv, vecere_item]:
+            jidla_dne = [sn, ds, obed, sv, vecere_item] + ([sx] if sx else [])
+            for jidlo in jidla_dne:
                 ing_qs = (
                     RecipeIngredient.objects.filter(jidlo=jidlo)
                     .values("ingredient__name", "ingredient__unit")
@@ -70,6 +80,7 @@ class Command(BaseCommand):
                 f"  🍲 Oběd: {obed.name}\n"
                 f"  🧃 Svačina: {sv.name}\n"
                 f"  🍝 Večeře: {vecere_item.name}\n"
+                + (f"  🍪 Extra snack: {sx.name}\n" if sx else "")
             )
 
         # Вывод итогов

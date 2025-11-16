@@ -1,7 +1,35 @@
 from django.db import models
+from django.contrib.auth.models import User
 from PIL import Image
-import os
+from django.db.models import Sum, F, FloatField
+from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import User
 
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+class Profile(models.Model):
+    saved_plan = models.JSONField(default=dict, blank=True, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    birth_date = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=[("muz", "Muž"), ("zena", "Žena")], default="muz")
+# === Прогресс пользователя (вес + заметки) ===
+class ProgressRecord(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="progress_records")
+    date = models.DateField(default=timezone.now)
+    weight = models.FloatField()
+    note = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.date} - {self.weight} kg"
+
+# === Ингредиенты ===
 class Ingredient(models.Model):
     CATEGORY_CHOICES = [
         ("maso", "Maso"),
@@ -22,11 +50,13 @@ class Ingredient(models.Model):
     carbs_per_100g = models.FloatField()
     unit = models.CharField(max_length=20, default="g")
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default="ostatni")
+    price = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} ({self.category})"
 
 
+# === Блюдо ===
 class Jidlo(models.Model):
     TYPY = [
         ("snidane", "Snídaně"),
@@ -34,6 +64,7 @@ class Jidlo(models.Model):
         ("obed", "Oběd"),
         ("svacina", "Svačina"),
         ("vecere", "Večeře"),
+        ("snack_extra", "Extra snack"),
     ]
 
     name = models.CharField(max_length=100)
@@ -43,18 +74,37 @@ class Jidlo(models.Model):
     carbs = models.FloatField(default=0.0, editable=False)
     type = models.CharField(max_length=20, choices=TYPY)
     preparation = models.TextField()
-    obrazek = models.ImageField(upload_to='jidla/', blank=True, null=True)  # <---
+    obrazek = models.ImageField(upload_to='jidla/', blank=True, null=True)
+    price = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+    def __str__(self):
+        return self.name
 
-        if self.obrazek:
-            img_path = self.obrazek.path
-            with Image.open(img_path) as img:
-                max_size = (800, 800)  # 🔹 максимум 800x800 пикселей
-                img.thumbnail(max_size)
-                img.save(img_path, quality=80, optimize=True)
+    @property
+    def total_weight(self):
+        return sum(ri.amount for ri in self.ingredients.all())
 
+    @property
+    def ready_price(self):
+        if hasattr(self, "ready_price_value"):
+            return round(self.ready_price_value, 2)
+        total_price = self.ingredients.aggregate(
+            total=Sum(
+                F("ingredient__price") * F("amount") / 100.0,
+                output_field=FloatField(),
+            )
+        )["total"] or 0.0
+        return round(total_price * 1.6, 2)
+
+    def optimize_image(self):
+        if self.obrazek and self.obrazek.path:
+            try:
+                with Image.open(self.obrazek.path) as img:
+                    img = img.convert("RGB")
+                    img.thumbnail((800, 800))
+                    img.save(self.obrazek.path, format="JPEG", quality=80, optimize=True)
+            except Exception as e:
+                print(f"Ошибка при оптимизации изображения: {e}")
 
     def recalc_macros_and_calories(self):
         kcal = protein = fat = carbs = 0.0
@@ -70,15 +120,13 @@ class Jidlo(models.Model):
     def get_macros_display(self):
         return f"{self.calories} kcal | B: {self.protein} g, T: {self.fat} g, S: {self.carbs} g"
 
-    def __str__(self):
-        return f"{self.name} ({self.get_macros_display()})"
 
-
+# === Связка рецепта и ингредиента ===
 class RecipeIngredient(models.Model):
     jidlo = models.ForeignKey(Jidlo, on_delete=models.CASCADE, related_name="ingredients")
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     amount = models.FloatField()
-    unit = models.CharField(max_length=20, default="g")  # ← добавляем поле
+    unit = models.CharField(max_length=20, default="g")
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -92,8 +140,10 @@ class RecipeIngredient(models.Model):
         jidlo.save(update_fields=['calories', 'protein', 'fat', 'carbs'])
 
 
+# === План питания (Premium) ===
 class MealPlan(models.Model):
-    name = models.CharField(max_length=100)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(max_length=100, default="Plán")
     created_at = models.DateTimeField(auto_now_add=True)
     data = models.JSONField(null=True, blank=True)
 
@@ -112,15 +162,17 @@ class MealPlan(models.Model):
         }
 
     def __str__(self):
+        if self.profile:
+            return f"{self.name} ({self.profile.first_name} {self.profile.last_name})"
         return self.name
 
+# === Элемент плана (день / тип еды) ===
 class MealItem(models.Model):
     meal_plan = models.ForeignKey(MealPlan, on_delete=models.CASCADE, related_name="items")
     jidlo = models.ForeignKey(Jidlo, on_delete=models.CASCADE)
     quantity = models.FloatField(default=1)
     day = models.CharField(max_length=20, default="pondeli")
-    type = models.CharField(max_length=20, default="obed")  # 👈 ДОБАВЬ ЭТО ПОЛЕ
+    type = models.CharField(max_length=20, default="obed")
 
     def __str__(self):
         return f"{self.day.title()} - {self.type} - {self.jidlo.name} x {self.quantity}"
-

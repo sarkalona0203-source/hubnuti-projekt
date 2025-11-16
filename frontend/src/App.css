@@ -39,3 +39,36 @@ body {
     transform: rotate(360deg);
   }
 }
+.nav-buttons-container {
+  display: flex;
+  gap: 12px;
+  padding: 15px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  
+}
+
+.nav-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+  background: linear-gradient(135deg, #0056b3, #00aaff);
+}
+
+.nav-btn:active {
+  transform: translateY(0px) scale(0.98);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}

@@ -112,7 +112,7 @@
 
 /* === ОШИБКА === */
 .kalkulacka-error {
-  color: #ff0048;
+  color: #330417;
   background: rgba(255, 233, 237, 0.9);
   padding: 12px;
   border-radius: 8px;
@@ -138,4 +138,9 @@
   border-radius: 12px;
   display: block;
   margin-top: 8px;    /* немного отступа сверху */
+}
+.jidla-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
 }

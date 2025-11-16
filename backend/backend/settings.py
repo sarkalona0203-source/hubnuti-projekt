@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "rest_framework",
+    "rest_framework.authtoken",
     "corsheaders",
     "kalkulacka",
     'django.contrib.admin',
@@ -58,7 +59,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,10 +126,19 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'kalkulacka.serializers.MyRenderer',  # путь к твоему кастомному рендереру
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    )
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEAL_TOLERANCE = 0.9
+MIDDLEWARE += [
+    "kalkulacka.middleware.RoleRedirectMiddleware",
+]
+LOGIN_REDIRECT_URL = "/profile/"  # куда идти после успешного входа
+LOGOUT_REDIRECT_URL = "/login/"   # куда идти после выхода
