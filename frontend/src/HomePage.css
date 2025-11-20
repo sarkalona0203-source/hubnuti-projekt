@@ -1,0 +1,70 @@
+.homepage-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #e8f3ff 0%, #ffffff 100%);
+  text-align: center;
+  padding: 30px;
+}
+
+.homepage-content {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 123, 255, 0.2);
+  max-width: 900px;
+  padding: 40px;
+}
+
+.homepage-title {
+  font-size: 42px;
+  color: #007bff;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.homepage-subtitle {
+  color: #004a99;
+  margin-top: 25px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.homepage-description, .homepage-text {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.homepage-list {
+  text-align: left;
+  list-style: disc;
+  margin: 0 auto 20px;
+  max-width: 600px;
+  color: #333;
+}
+
+.homepage-list li {
+  margin-bottom: 10px;
+}
+
+.water-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.water-table th {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+}
+
+.water-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
