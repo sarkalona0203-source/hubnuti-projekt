@@ -1,18 +1,14 @@
-from pathlib import Path
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# === BASE DIR ===
-BASE_DIR = Path(__file__).resolve().parent.parent  # папка backend/
-
-# === SECRET & DEBUG ===
 SECRET_KEY = os.getenv("SECRET_KEY", "local-secret-key")
 DEBUG = os.getenv("DEBUG", "True") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
-# === INSTALLED APPS ===
 INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
@@ -26,7 +22,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
-# === MIDDLEWARE ===
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -39,13 +34,15 @@ MIDDLEWARE = [
     "kalkulacka.middleware.RoleRedirectMiddleware",
 ]
 
-# === URLS & TEMPLATES ===
 ROOT_URLCONF = "backend.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [
+            BASE_DIR / "templates",
+            BASE_DIR.parent / "frontend" / "build"
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -59,7 +56,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-# === DATABASE ===
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -67,30 +63,15 @@ DATABASES = {
     }
 }
 
-# === PASSWORD VALIDATION ===
-AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
-]
-
-# === INTERNATIONALIZATION ===
-LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
-USE_I18N = True
-USE_TZ = True
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# === STATIC & MEDIA ===
 STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    BASE_DIR.parent / "frontend" / "build" / "static",
+]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# === REST FRAMEWORK ===
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
@@ -101,7 +82,17 @@ REST_FRAMEWORK = {
     ),
 }
 
-# === CUSTOM SETTINGS ===
 MEAL_TOLERANCE = 0.9
 LOGIN_REDIRECT_URL = "/profile/"
 LOGOUT_REDIRECT_URL = "/login/"
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ["*"]
+CORS_ALLOW_METHODS = ["*"]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+]
