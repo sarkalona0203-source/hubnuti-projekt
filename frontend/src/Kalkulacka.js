@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./kalkulacka.css";
+import { API_URL } from "./config";
 
 const INITIAL_FORM = {
   vaha: "",
@@ -61,14 +62,14 @@ export default function Kalkulacka() {
 
     if (mode === "save") {
       if (!vysledek) return;
-      const data = await fetchData("http://127.0.0.1:8000/api/ulozit_z_existujiciho/", vysledek);
+      const data = await fetchData(`${API_URL}/ulozit_z_existujiciho/`, vysledek);
       if (data.error) setError(data.error);
       else alert("✅ Plán byl úspěšně uložen.");
       return;
     }
 
     if (mode === "load") {
-      const data = await fetchData("http://127.0.0.1:8000/api/ulozeny_plan/");
+      const data = await fetchData(`${API_URL}/ulozeny_plan/`);
       if (data.error) setError(data.error);
       else setVysledek(data);
       return;
@@ -101,7 +102,7 @@ export default function Kalkulacka() {
 
     body.refresh = refresh;
 
-    const res = await fetch(`http://127.0.0.1:8000/api/vypocet/?_=${Date.now()}`, {
+    const res = await fetch(`${API_URL}/vypocet/?_=${Date.now()}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

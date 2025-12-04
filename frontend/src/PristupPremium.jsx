@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Line } from "react-chartjs-2";
+import { API_URL } from "./config";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,7 +14,7 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const API_URL = "http://localhost:8000/api/";
+
 
 const PristupPremium = () => {
   // --- Состояния ---
@@ -36,42 +37,62 @@ const PristupPremium = () => {
   };
 
   // --- Регистрация ---
-  const handleRegister = async () => {
-    if (!loginUsername || !loginPassword) return alert("Vyplň uživatelské jméno a heslo!");
-    try {
-      const res = await fetch(`${API_URL}register/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: loginUsername, password: loginPassword }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Chyba při registraci.");
-      alert("✅ Registrace úspěšná! Můžeš se přihlásit.");
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+const handleRegister = async () => {
+  if (!loginUsername || !loginPassword) {
+    return setMessage("Vyplň uživatelské jméno a heslo!");
+  }
 
-  // --- Вход ---
-  const handleLogin = async () => {
-    if (!loginUsername || !loginPassword) return alert("Vyplň uživatelské jméno a heslo!");
-    try {
-      const res = await fetch(`${API_URL}token/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: loginUsername, password: loginPassword }),
-      });
-      if (!res.ok) throw new Error("Špatný login nebo heslo!");
-      const data = await res.json();
-      setToken(data.token);
-      localStorage.setItem("token", data.token);
-      setIsLoggedIn(true);
-      await loadProgress(data.token);
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+  try {
+    const res = await fetch(`${API_URL}/register/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: loginUsername, password: loginPassword }),
+    });
 
+    const data = await res.json();
+
+    if (!res.ok) {
+      // Показываем конкретную ошибку от сервера
+      setMessage(data.error || JSON.stringify(data));
+      return;
+    }
+
+    setMessage("✅ Registrace úspěšná! Můžeš se přihlásit.");
+  } catch (err) {
+    setMessage("Chyba sítě nebo serveru: " + err.message);
+  }
+};
+
+// --- Вход ---
+const handleLogin = async () => {
+  if (!loginUsername || !loginPassword) {
+    return setMessage("Vyplň uživatelské jméno a heslo!");
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/token/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: loginUsername, password: loginPassword }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      // Показываем конкретную ошибку от сервера
+      setMessage(data.error || data.non_field_errors?.[0] || JSON.stringify(data));
+      return;
+    }
+
+    setToken(data.token);
+    localStorage.setItem("token", data.token);
+    setIsLoggedIn(true);
+    setMessage("");
+    await loadProgress(data.token);
+  } catch (err) {
+    setMessage("Chyba sítě nebo serveru: " + err.message);
+  }
+};
   // --- Выход ---
   const handleLogout = () => {
     setToken("");
@@ -83,7 +104,7 @@ const PristupPremium = () => {
   // --- Загрузка прогресса ---
   const loadProgress = async (authToken) => {
     try {
-      const res = await fetch(`${API_URL}get_progress/`, {
+      const res = await fetch(`${API_URL}/get_progress/`, {
         headers: { Authorization: `Token ${authToken}` },
       });
       if (!res.ok) throw new Error("Chyba při načítání dat.");
@@ -100,7 +121,7 @@ const PristupPremium = () => {
     const weightFloat = parseFloat(weight.replace(",", "."));
     if (isNaN(weightFloat)) return alert("Neplatná hodnota!");
     try {
-      const res = await fetch(`${API_URL}add_progress/`, {
+      const res = await fetch(`${API_URL}/add_progress/`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Token ${token}` },
         body: JSON.stringify({ weight: weightFloat, note }),
@@ -123,7 +144,7 @@ const PristupPremium = () => {
   const deleteProgress = async (id) => {
     if (!window.confirm("Opravdu smazat?")) return;
     try {
-      const res = await fetch(`${API_URL}delete_progress/${id}/`, {
+      const res = await fetch(`${API_URL}/delete_progress/${id}/`, {
         method: "DELETE",
         headers: { Authorization: `Token ${token}` },
       });

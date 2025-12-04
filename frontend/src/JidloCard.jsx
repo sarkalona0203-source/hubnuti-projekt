@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./JidlaPage.css";
+import { API_URL } from "./config";
 
 export default function JidloCard({ jidlo, onAdd }) {
   const types = jidlo.types || [];
@@ -7,7 +8,6 @@ export default function JidloCard({ jidlo, onAdd }) {
   const defaultType = types[0] || "";
   const [selectedType, setSelectedType] = useState(defaultType);
 
-  // Цены: обычная и готового блюда
   const normalPrice = types.length ? prices[selectedType] || 0 : jidlo.price_value || 0;
   const readyPrice = jidlo.ready_price_value || 0;
 
@@ -16,15 +16,16 @@ export default function JidloCard({ jidlo, onAdd }) {
   };
 
   const imgSrc =
-  typeof jidlo.obrazek === "string"
-    ? jidlo.obrazek.startsWith("http")
-      ? jidlo.obrazek
-      : `http://127.0.0.1:8000${jidlo.obrazek}`
-    : jidlo.obrazek?.url
-    ? jidlo.obrazek.url.startsWith("http")
-      ? jidlo.obrazek.url
-      : `http://127.0.0.1:8000${jidlo.obrazek.url}`
-    : "https://via.placeholder.com/180";
+    typeof jidlo.obrazek === "string"
+      ? jidlo.obrazek.startsWith("http")
+        ? jidlo.obrazek
+        : `${API_URL.replace("/api", "")}${jidlo.obrazek}`
+      : jidlo.obrazek?.url
+      ? jidlo.obrazek.url.startsWith("http")
+        ? jidlo.obrazek.url
+        : `${API_URL.replace("/api", "")}${jidlo.obrazek.url}`
+      : "https://via.placeholder.com/180";
+
   return (
     <div className="jidlo-card card">
       <img
@@ -43,10 +44,7 @@ export default function JidloCard({ jidlo, onAdd }) {
       </div>
 
       {types.length > 0 && (
-        <select
-          value={selectedType}
-          onChange={(e) => setSelectedType(e.target.value)}
-        >
+        <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
           {types.map((type) => (
             <option key={type} value={type}>
               {type} — {prices[type] || 0} Kč
@@ -56,8 +54,9 @@ export default function JidloCard({ jidlo, onAdd }) {
       )}
 
       <div style={{ marginTop: "8px", fontWeight: "bold" }}>
-  Cena surovin: {Number(normalPrice).toFixed(2)} Kč | Cena hotového jídla: {Number(readyPrice).toFixed(2)} Kč
-</div>
+        Cena surovin: {Number(normalPrice).toFixed(2)} Kč | Cena hotového jídla:{" "}
+        {Number(readyPrice).toFixed(2)} Kč
+      </div>
 
       <button className="kalkulacka-button mt-2" onClick={handleAddClick}>
         ➕ Přidat do košíku
