@@ -232,17 +232,20 @@ export default function Kalkulacka() {
                 {j.price && <span className="jidlo-price"> — {j.price} Kč</span>}
 
                 {j.obrazek && (
-                  <div className="jidlo-img-box">
-                    <img
-                      src={j.obrazek}
-                      alt={j.name}
-                      className="jidlo-img"
-                      loading="lazy"
-                      onError={(e) => (e.target.src = "/fallback.jpg")}
-                    />
-                  </div>
-                )}
-
+  <div className="jidlo-img-box">
+    <img
+      src={
+        j.obrazek.startsWith("http")
+          ? j.obrazek
+          : `${API_URL.replace("/api", "")}${j.obrazek || "/fallback.jpg"}`
+      }
+      alt={j.name}
+      className="jidlo-img"
+      loading="lazy"
+      onError={(e) => (e.target.src = "/fallback.jpg")}
+    />
+  </div>
+)}
                 {j.preparation && <p className="preparation">{j.preparation}</p>}
 
                 {j.ingredients?.length > 0 && (

@@ -34,9 +34,9 @@ export default function JidlaPage() {
     const numericReadyPrice = Number(readyPrice).toFixed(2);
 
     const imageUrl =
-      jidlo.obrazek?.startsWith("http")
-        ? jidlo.obrazek
-        : `${API_URL.replace("/api", "")}${jidlo.obrazek || "/images/placeholder.png"}`;
+  jidlo.obrazek?.startsWith("http")
+    ? jidlo.obrazek
+    : `${API_URL.replace("/api", "")}/media/${jidlo.obrazek || "placeholder.png"}`;
 
     if (existing) {
       setCart(
