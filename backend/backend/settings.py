@@ -9,10 +9,13 @@ SECRET_KEY = os.getenv("SECRET_KEY", "local-secret-key")
 DEBUG = os.getenv("DEBUG", "True") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
+# ========================
+# Installed Apps
+# ========================
 INSTALLED_APPS = [
+    "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
-    "corsheaders",
     "kalkulacka",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -22,6 +25,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
+# ========================
+# Middleware
+# ========================
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -56,6 +62,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
+# ========================
+# Database
+# ========================
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -63,6 +72,9 @@ DATABASES = {
     }
 }
 
+# ========================
+# Static & Media
+# ========================
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR.parent / "frontend" / "build" / "static",
@@ -72,6 +84,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# ========================
+# Django REST Framework
+# ========================
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
@@ -82,17 +97,38 @@ REST_FRAMEWORK = {
     ),
 }
 
+# ========================
+# Authentication & Redirects
+# ========================
 MEAL_TOLERANCE = 0.9
 LOGIN_REDIRECT_URL = "/profile/"
 LOGOUT_REDIRECT_URL = "/login/"
-CORS_ALLOW_ALL_ORIGINS = True
+
+# ========================
+# CORS & CSRF
+# ========================
+FRONTEND_URL = "https://hubnuti-projekt-15.onrender.com"
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ["*"]
 CORS_ALLOW_METHODS = ["*"]
 
+if DEBUG:
+    # На локалке — полный доступ
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ]
+else:
+    # В продакшне — только фронтенд Render
+    CORS_ALLOWED_ORIGINS = [FRONTEND_URL]
+
 CSRF_TRUSTED_ORIGINS = [
+    FRONTEND_URL,
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://localhost:3001",
-    "http://127.0.0.1:3001",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
