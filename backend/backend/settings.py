@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ========================
+# Основные настройки
+# ========================
 SECRET_KEY = os.getenv("SECRET_KEY", "local-secret-key")
 DEBUG = os.getenv("DEBUG", "True") == "True"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
@@ -29,7 +32,7 @@ INSTALLED_APPS = [
 # Middleware
 # ========================
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # Должен быть первым
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -47,7 +50,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             BASE_DIR / "templates",
-            BASE_DIR.parent / "frontend" / "build"
+            BASE_DIR.parent / "frontend" / "build",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -114,7 +117,7 @@ CORS_ALLOW_HEADERS = ["*"]
 CORS_ALLOW_METHODS = ["*"]
 
 if DEBUG:
-    # На локалке — полный доступ
+    # Локальная разработка — разрешаем все локальные адреса фронтенда
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
@@ -122,13 +125,7 @@ if DEBUG:
         "http://127.0.0.1:8000",
     ]
 else:
-    # В продакшне — только фронтенд Render
+    # Продакшн — только фронтенд Render
     CORS_ALLOWED_ORIGINS = [FRONTEND_URL]
 
-CSRF_TRUSTED_ORIGINS = [
-    FRONTEND_URL,
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-]
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
