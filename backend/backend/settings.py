@@ -117,15 +117,13 @@ CORS_ALLOW_HEADERS = ["*"]
 CORS_ALLOW_METHODS = ["*"]
 
 if DEBUG:
-    # Локальная разработка — разрешаем все локальные адреса фронтенда
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
     ]
+    CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
 else:
-    # Продакшн — только фронтенд Render
-    CORS_ALLOWED_ORIGINS = [FRONTEND_URL]
-
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
+    CORS_ALLOWED_ORIGINS = ["https://hubnuti-projekt-15.onrender.com"]
+    CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
