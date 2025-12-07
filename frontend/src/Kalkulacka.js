@@ -233,17 +233,17 @@ export default function Kalkulacka() {
 
                 {j.obrazek && (
   <div className="jidlo-img-box">
-    <img
-      src={
-        j.obrazek.startsWith("http")
-          ? j.obrazek
-          : `${API_URL.replace("/api", "")}${j.obrazek || "/fallback.jpg"}`
-      }
-      alt={j.name}
-      className="jidlo-img"
-      loading="lazy"
-      onError={(e) => (e.target.src = "/fallback.jpg")}
-    />
+   <img
+  src={
+    j.obrazek.startsWith("http")
+      ? j.obrazek
+      : `${process.env.REACT_APP_MEDIA_URL}${j.obrazek}`
+  }
+  alt={j.name}
+  className="jidlo-img"
+  loading="lazy"
+  onError={(e) => (e.target.src = "/fallback.jpg")}
+/>
   </div>
 )}
                 {j.preparation && <p className="preparation">{j.preparation}</p>}

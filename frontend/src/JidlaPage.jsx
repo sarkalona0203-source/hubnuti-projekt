@@ -36,8 +36,7 @@ export default function JidlaPage() {
     const imageUrl =
   jidlo.obrazek?.startsWith("http")
     ? jidlo.obrazek
-    : `${API_URL.replace("/api", "")}/media/${jidlo.obrazek || "placeholder.png"}`;
-
+    : `${process.env.REACT_APP_MEDIA_URL}${jidlo.obrazek || "/placeholder.png"}`;
     if (existing) {
       setCart(
         cart.map((item) =>
