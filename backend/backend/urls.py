@@ -60,13 +60,6 @@ if settings.DEBUG:
         document_root=settings.BASE_DIR.parent / "frontend" / "build" / "static"
     )
 
-# === 2) МЕДИА ===
-if settings.DEBUG:
-    urlpatterns += static(
-        settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT
-    )
-
 # --- React SPA CATCH-ALL (должен быть САМЫМ ПОСЛЕДНИМ!) ---
 urlpatterns += [
     re_path(r"^(?!api|admin).*", serve_react),

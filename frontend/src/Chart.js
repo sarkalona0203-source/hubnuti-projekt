@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
+import { API_URL } from "./config";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,14 +27,14 @@ export default function ProgressChart() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("/api/get_progress/")
+    fetch(`${API_URL}/get_progress/`)
       .then(res => res.json())
       .then(json => setData(json))
       .catch(err => console.error(err));
   }, []);
 
   const chartData = {
-    labels: data.map(item => item.date), // даты
+    labels: data.map(item => item.date),
     datasets: [
       {
         label: "Hmotnost (kg)",
@@ -51,28 +53,10 @@ export default function ProgressChart() {
     ]
   };
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      tooltip: {
-        mode: "index",
-        intersect: false,
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: false
-      }
-    }
-  };
-
   return (
     <div>
       <h2>Graf pokroku</h2>
-      <Line data={chartData} options={options} />
+      <Line data={chartData} options={{ responsive: true }} />
     </div>
   );
 }
