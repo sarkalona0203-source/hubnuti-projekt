@@ -24,11 +24,10 @@ export default function JidloCard({ jidlo, onAdd }) {
   return (
     <div className="jidlo-card card">
       <img
-        src={imgSrc}
-        alt={jidlo.name}
-        className="jidlo-image"
-        style={{ width: "180px", borderRadius: "10px", objectFit: "cover" }}
-      />
+  src={jidlo.obrazek}
+  alt={jidlo.name}
+  style={{ width: "200px", border: "1px solid red" }}
+/>
 
       <h3 className="jidlo-title">{jidlo.name}</h3>
       {jidlo.description && <p>{jidlo.description}</p>}
