@@ -12,17 +12,28 @@ export const MEDIA_URL =
 
 /**
  * Функция для построения корректного пути к картинке.
- * Принимает объект или строку и возвращает полный URL.
+ * Автоматически заменяет домен -16 на -17.
  */
 export const getImageUrl = (obrazek) => {
   if (!obrazek) return "https://via.placeholder.com/180";
 
+  // Если строка
   if (typeof obrazek === "string") {
-    return obrazek.startsWith("http") ? obrazek : `${MEDIA_URL}/${obrazek}`;
+    // Подменяем домен, если это старый хост
+    const updatedUrl = obrazek.replace(
+      "https://hubnuti-projekt-16.onrender.com",
+      "https://hubnuti-projekt-17.onrender.com"
+    );
+    return updatedUrl.startsWith("http") ? updatedUrl : `${MEDIA_URL}/${updatedUrl}`;
   }
 
+  // Если объект с полем url
   if (obrazek.url) {
-    return obrazek.url.startsWith("http") ? obrazek.url : `${MEDIA_URL}/${obrazek.url}`;
+    const updatedUrl = obrazek.url.replace(
+      "https://hubnuti-projekt-16.onrender.com",
+      "https://hubnuti-projekt-17.onrender.com"
+    );
+    return updatedUrl.startsWith("http") ? updatedUrl : `${MEDIA_URL}/${updatedUrl}`;
   }
 
   return "https://via.placeholder.com/180";

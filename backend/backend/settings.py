@@ -120,6 +120,7 @@ CORS_ALLOW_METHODS = ["*"]
 
 if DEBUG:
     CORS_ALLOWED_ORIGINS = [
+        "https://hubnuti-projekt-17.onrender.com",
         "https://hubnuti-projekt-15.onrender.com",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
