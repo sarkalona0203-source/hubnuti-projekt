@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./JidlaPage.css";
-import { MEDIA_URL } from "./config";
+import { getImageUrl } from "./config";
 
 
 
@@ -10,6 +10,7 @@ export default function JidloCard({ jidlo, onAdd }) {
   const defaultType = types[0] || "";
   const [selectedType, setSelectedType] = useState(defaultType);
 
+
   const normalPrice = types.length ? prices[selectedType] || 0 : jidlo.price_value || 0;
   const readyPrice = jidlo.ready_price_value || 0;
 
@@ -18,21 +19,7 @@ export default function JidloCard({ jidlo, onAdd }) {
   };
 
   // === Правильное построение URL картинки ===
-  const imgSrc = (() => {
-    if (typeof jidlo.obrazek === "string") {
-      return jidlo.obrazek.startsWith("http")
-        ? jidlo.obrazek
-        : `${MEDIA_URL}${jidlo.obrazek}`;
-    }
-
-    if (jidlo.obrazek?.url) {
-      return jidlo.obrazek.url.startsWith("http")
-        ? jidlo.obrazek.url
-        : `${MEDIA_URL}${jidlo.obrazek.url}`;
-    }
-
-    return "https://via.placeholder.com/180";
-  })();
+  const imgSrc = getImageUrl(jidlo.obrazek);
 
   return (
     <div className="jidlo-card card">
