@@ -33,7 +33,7 @@ INSTALLED_APPS = [
 # ========================
 MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "corsheaders.middleware.CorsMiddleware",  # Должен быть первым
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -46,6 +46,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "backend.urls"
 
+# ========================
+# Templates
+# ========================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -77,64 +80,25 @@ DATABASES = {
 }
 
 # ========================
-# Static & Media
+# STATIC & MEDIA
 # ========================
 STATIC_URL = "/static/"
+
+# папка React build
 STATICFILES_DIRS = [
     BASE_DIR.parent / "frontend" / "build" / "static",
 ]
-STATIC_ROOT = BASE_DIR / "staticfiles"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# куда collectstatic будет собирать файлы
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# ========================
-# Django REST Framework
-# ========================
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.TokenAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
-    ),
-}
+# Media (картинки)
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # ========================
-# Authentication & Redirects
+# CORS
 # ========================
-MEAL_TOLERANCE = 0.9
-LOGIN_REDIRECT_URL = "/profile/"
-LOGOUT_REDIRECT_URL = "/login/"
-
-# ========================
-# CORS & CSRF
-# ========================
-FRONTEND_URL = os.getenv(
-    "FRONTEND_URL", "https://hubnuti-projekt-15.onrender.com"
-)
-
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ["*"]
-CORS_ALLOW_METHODS = ["*"]
-
-if DEBUG:
-    # Локальная разработка
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3001",
-    ]
-    CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
-else:
-    # Продакшн: фронт на 15 m, бэк на 16 m
-    CORS_ALLOWED_ORIGINS = [
-        "https://hubnuti-projekt-15.onrender.com"
-    ]
-    CSRF_TRUSTED_ORIGINS = [
-        "https://hubnuti-projekt-15.onrender.com"
-    ]
+CORS_ALLOW_ALL_ORIGINS = True
