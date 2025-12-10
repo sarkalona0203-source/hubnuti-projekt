@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./JidlaPage.css";
-import { API_URL, MEDIA_URL } from "./config";
+import { MEDIA_URL } from "./config";
+
+
 
 export default function JidloCard({ jidlo, onAdd }) {
   const types = jidlo.types || [];
