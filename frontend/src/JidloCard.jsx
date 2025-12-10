@@ -24,7 +24,7 @@ export default function JidloCard({ jidlo, onAdd }) {
   return (
     <div className="jidlo-card card">
       <img
-  src={jidlo.obrazek}
+  src={imgSrc}
   alt={jidlo.name}
   style={{ width: "200px", border: "1px solid red" }}
 />
