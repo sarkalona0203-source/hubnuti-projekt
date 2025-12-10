@@ -1,7 +1,18 @@
+// config.js
+
+// Базовый URL API
+export const API_URL =
+  process.env.REACT_APP_API_URL ||
+  "https://hubnuti-projekt-16.onrender.com/api";
+
+// Базовый URL для медиа (картинок)
 export const MEDIA_URL =
   process.env.REACT_APP_MEDIA_URL ||
   "https://hubnuti-projekt-16.onrender.com/media";
 
+/**
+ * Функция для построения корректного пути к картинке
+ */
 export const getImageUrl = (obrazek) => {
   if (!obrazek) return "https://via.placeholder.com/180";
 
