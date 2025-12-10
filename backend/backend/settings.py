@@ -85,8 +85,9 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # ========================
@@ -112,16 +113,17 @@ LOGOUT_REDIRECT_URL = "/login/"
 # ========================
 # CORS & CSRF
 # ========================
-FRONTEND_URL = "https://hubnuti-projekt-15.onrender.com"
+FRONTEND_URL = os.getenv(
+    "FRONTEND_URL", "https://hubnuti-projekt-15.onrender.com"
+)
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ["*"]
 CORS_ALLOW_METHODS = ["*"]
 
 if DEBUG:
+    # Локальная разработка
     CORS_ALLOWED_ORIGINS = [
-        "https://hubnuti-projekt-17.onrender.com",
-        "https://hubnuti-projekt-15.onrender.com",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:3001",
@@ -129,5 +131,10 @@ if DEBUG:
     ]
     CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
 else:
-    CORS_ALLOWED_ORIGINS = ["https://hubnuti-projekt-15.onrender.com"]
-    CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
+    # Продакшн: фронт на 15 m, бэк на 16 m
+    CORS_ALLOWED_ORIGINS = [
+        "https://hubnuti-projekt-15.onrender.com"
+    ]
+    CSRF_TRUSTED_ORIGINS = [
+        "https://hubnuti-projekt-15.onrender.com"
+    ]
