@@ -5,10 +5,12 @@ export const MEDIA_URL =
   process.env.REACT_APP_MEDIA_URL || "https://hubnuti-projekt-16.onrender.com/media";
 
 export const getImageUrl = (obrazek) => {
-  if (!obrazek) return `${MEDIA_URL}/jidla/fallback.jpg`;
+  const fallback = `${MEDIA_URL}/jidla/fallback.jpg`;
 
-  // если уже есть 'jidla/' в начале, не добавляем снова
-  if (obrazek.startsWith("jidla/")) return `${MEDIA_URL}/${obrazek}`;
+  if (!obrazek) return fallback;
 
-  return `${MEDIA_URL}/jidla/${obrazek}`;
+  // Убираем лишние "jidla/" в начале
+  let cleanObrazek = obrazek.replace(/^\/?jidla\/+/, "");
+
+  return `${MEDIA_URL}/jidla/${cleanObrazek}`;
 };
