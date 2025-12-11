@@ -1,19 +1,17 @@
-// Базовый URL для медиа (теперь берём из public)
-export const MEDIA_URL = process.env.REACT_APP_MEDIA_URL || "/media";
+export const API_URL =
+  process.env.REACT_APP_API_URL || "https://hubnuti-projekt-16.onrender.com/api";
 
-// Функция для построения пути к картинке
+export const MEDIA_URL =
+  process.env.REACT_APP_MEDIA_URL || "https://hubnuti-projekt-16.onrender.com/media";
+
 export const getImageUrl = (obrazek) => {
   if (!obrazek) return "https://via.placeholder.com/180";
 
-  // Если строка — просто путь к файлу в /media/jidla/
-  if (typeof obrazek === "string") {
-    return obrazek.startsWith("http") ? obrazek : `${MEDIA_URL}/jidla/${obrazek}`;
+  // ✔ Если полная ссылка — возвращаем как есть
+  if (typeof obrazek === "string" && obrazek.startsWith("http")) {
+    return obrazek;
   }
 
-  // Если объект с полем url
-  if (obrazek.url) {
-    return obrazek.url.startsWith("http") ? obrazek.url : `${MEDIA_URL}/jidla/${obrazek.url}`;
-  }
-
-  return "https://via.placeholder.com/180";
+  // ✔ Добавляем если путь относительный
+  return `${MEDIA_URL}/${obrazek}`;
 };

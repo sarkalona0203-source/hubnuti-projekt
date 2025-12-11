@@ -8,9 +8,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ========================
 # Основные настройки
 # ========================
-SECRET_KEY = os.getenv("SECRET_KEY", "local-secret-key")
-DEBUG = os.getenv("DEBUG", "True") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
+    "local-secret-key"
+)
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "hubnuti-projekt-16.onrender.com").split(",")
 
 # ========================
 # Installed Apps
@@ -33,7 +38,7 @@ INSTALLED_APPS = [
 # ========================
 MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # должен быть первым
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -80,25 +85,47 @@ DATABASES = {
 }
 
 # ========================
-# STATIC & MEDIA
+# Static & Media
 # ========================
 STATIC_URL = "/static/"
-
-# папка React build
 STATICFILES_DIRS = [
     BASE_DIR.parent / "frontend" / "build" / "static",
 ]
-
-# куда collectstatic будет собирать файлы
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Media (картинки)
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # ========================
-# CORS
+# Django REST Framework
 # ========================
-CORS_ALLOW_ALL_ORIGINS = True
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
+}
+
+# ========================
+# Authentication & Redirects
+# ========================
+MEAL_TOLERANCE = 0.9
+LOGIN_REDIRECT_URL = "/profile/"
+LOGOUT_REDIRECT_URL = "/login/"
+
+# ========================
+# CORS & CSRF
+# ========================
+FRONTEND_URL = os.getenv(
+    "FRONTEND_URL", "https://hubnuti-projekt-15.onrender.com"
+)
+
+CORS_ALLOWED_ORIGINS = [FRONTEND_URL]
+CSRF_TRUSTED_ORIGINS = [FRONTEND_URL]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ["*"]
+CORS_ALLOW_METHODS = ["*"]

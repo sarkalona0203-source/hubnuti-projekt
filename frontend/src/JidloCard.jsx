@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./JidlaPage.css";
-import { getImageUrl } from "./config";
+import { MEDIA_URL, getImageUrl } from "./config";
 
 
 
@@ -24,9 +24,10 @@ export default function JidloCard({ jidlo, onAdd }) {
   return (
     <div className="jidlo-card card">
       <img
-  src={imgSrc}
+  src={getImageUrl(jidlo.obrazek)}
   alt={jidlo.name}
   style={{ width: "200px", border: "1px solid red" }}
+  onError={(e) => (e.target.src = `${MEDIA_URL}/fallback.jpg`)}
 />
 
       <h3 className="jidlo-title">{jidlo.name}</h3>
