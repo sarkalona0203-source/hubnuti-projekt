@@ -62,5 +62,5 @@ if settings.DEBUG:
 
 # --- React SPA CATCH-ALL (должен быть САМЫМ ПОСЛЕДНИМ!) ---
 urlpatterns += [
-    re_path(r"^(?!api|admin).*", serve_react),
+    re_path(r"^(?!api|admin|media).*", serve_react),
 ]
