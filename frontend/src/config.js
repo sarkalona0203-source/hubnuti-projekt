@@ -5,13 +5,11 @@ export const MEDIA_URL =
   process.env.REACT_APP_MEDIA_URL || "https://hubnuti-projekt-16.onrender.com/media";
 
 export const getImageUrl = (obrazek) => {
-  if (!obrazek) return "https://via.placeholder.com/180";
+  if (!obrazek) return `${MEDIA_URL}/fallback.jpg`;
 
-  // ✔ Если полная ссылка — возвращаем как есть
-  if (typeof obrazek === "string" && obrazek.startsWith("http")) {
-    return obrazek;
-  }
+  // если полный URL, возвращаем как есть
+  if (obrazek.startsWith("http")) return obrazek;
 
-  // ✔ Добавляем если путь относительный
+  // относительный путь добавляем MEDIA_URL
   return `${MEDIA_URL}/${obrazek}`;
 };

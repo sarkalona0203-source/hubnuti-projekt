@@ -238,7 +238,7 @@ export default function Kalkulacka() {
       alt={j.name}
       className="jidlo-img"
       loading="lazy"
-      onError={(e) => (e.target.src = `${MEDIA_URL}/fallback.jpg`)}
+      onError={(e) => (e.target.src = `${MEDIA_URL}/jidla/fallback.jpg`)}
     />
   </div>
 )}

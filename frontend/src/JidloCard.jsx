@@ -23,8 +23,7 @@ export default function JidloCard({ jidlo, onAdd }) {
       <img
   src={getImageUrl(jidlo.obrazek)}
   alt={jidlo.name}
-  style={{ width: "200px", border: "1px solid red" }}
-  onError={(e) => (e.target.src = `${MEDIA_URL}/fallback.jpg`)}
+  onError={(e) => (e.target.src = `${MEDIA_URL}/jidla/fallback.jpg`)}
 />
 
       <h3 className="jidlo-title">{jidlo.name}</h3>
