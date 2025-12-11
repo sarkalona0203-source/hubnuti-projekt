@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./JidlaPage.css";
-import { MEDIA_URL, getImageUrl } from "./config";
+import { getImageUrl } from "./config";
 
 
 
