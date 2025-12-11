@@ -9,8 +9,8 @@ export const getImageUrl = (obrazek) => {
 
   if (!obrazek) return fallback;
 
-  // Убираем лишние "jidla/" в начале
-  let cleanObrazek = obrazek.replace(/^\/?jidla\/+/, "");
+  // Убираем все дублирующиеся "jidla/" в начале
+  let cleanObrazek = obrazek.replace(/^(\/?jidla\/)+/, "");
 
   return `${MEDIA_URL}/jidla/${cleanObrazek}`;
 };
