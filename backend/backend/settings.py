@@ -119,6 +119,8 @@ LOGOUT_REDIRECT_URL = "/login/"
 # ========================
 # CORS & CSRF
 # ========================
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR.parent / "frontend" / "public" / "media"
 FRONTEND_URL = os.getenv(
     "FRONTEND_URL", "https://hubnuti-projekt-15.onrender.com"
 )

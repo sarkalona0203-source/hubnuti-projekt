@@ -51,7 +51,8 @@ urlpatterns = [
     # --- Admin Django ---
     path("admin/", admin.site.urls),
 ]
-
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.BASE_DIR / "frontend" / "public" / "media")
 # статические (для DEBUG)
 # === 1) СТАТИКА REACT ===
 if settings.DEBUG:
