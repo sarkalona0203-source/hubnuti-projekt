@@ -3,7 +3,7 @@ import Filters from "./Filters";
 import JidloCard from "./JidloCard";
 import Cart from "./Cart";
 import "./JidlaPage.css";
-import { API_URL, getImageUrl, MEDIA_URL } from "./config";
+import { API_URL, getImageUrl } from "./config";
 export default function JidlaPage() {
   const [jidla, setJidla] = useState([]);
   const [filters, setFilters] = useState({});

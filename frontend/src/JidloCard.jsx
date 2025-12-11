@@ -18,9 +18,6 @@ export default function JidloCard({ jidlo, onAdd }) {
     onAdd(jidlo, selectedType, normalPrice, readyPrice);
   };
 
-  // === Правильное построение URL картинки ===
-  const imgSrc = getImageUrl(jidlo.obrazek);
-
   return (
     <div className="jidlo-card card">
       <img
