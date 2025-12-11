@@ -232,15 +232,13 @@ export default function Kalkulacka() {
                 {j.price && <span className="jidlo-price"> — {j.price} Kč</span>}
 
                 {j.obrazek && (
-  <div className="jidlo-img-box">
-    <img
-      src={getImageUrl(j.obrazek)}
-      alt={j.name}
-      className="jidlo-img"
-      loading="lazy"
-      onError={(e) => (e.target.src = `${MEDIA_URL}/jidla/fallback.jpg`)}
-    />
-  </div>
+ <img
+  src={getImageUrl(j.obrazek)}  // j.obrazek = "8f078a4c.png"
+  alt={j.name}
+  className="jidlo-img"
+  loading="lazy"
+  onError={(e) => (e.target.src = `${MEDIA_URL}/fallback.jpg`)}
+/>
 )}
                 {j.preparation && <p className="preparation">{j.preparation}</p>}
 
