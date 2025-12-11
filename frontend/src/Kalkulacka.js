@@ -235,10 +235,9 @@ export default function Kalkulacka() {
   <img
     src={getImageUrl(j.obrazek)}
     alt={j.name}
+    onError={(e) => (e.target.src = getImageUrl(null))}
     className="jidlo-img"
-    loading="lazy"
-    onError={(e) => (e.target.src = "/media/fallback.jpg")} // путь к fallback в public/media
-  />
+  />  
 )}
                 {j.preparation && <p className="preparation">{j.preparation}</p>}
 

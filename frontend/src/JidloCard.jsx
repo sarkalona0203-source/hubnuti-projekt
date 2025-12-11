@@ -25,7 +25,7 @@ export default function JidloCard({ jidlo, onAdd }) {
       alt={jidlo.name}
       className="jidlo-img"
       loading="lazy"
-      onError={(e) => (e.target.src = "/media/fallback.jpg")} // fallback тоже в public/media
+      onError={(e) => (e.target.src = getImageUrl(null))}
     />
 
     <h3 className="jidlo-title">{jidlo.name}</h3>
