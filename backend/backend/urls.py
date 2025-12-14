@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 from kalkulacka.views_api import (
     vypocet, ulozeny_plan, ulozit_z_existujiciho,
     vsechna_jidla, get_progress, add_progress,
-    delete_progress, register
+    delete_progress, register, health
 )
 from kalkulacka.views_user import profile_detail, profile_edit
 from kalkulacka.views_admin import admin_dashboard
@@ -14,11 +14,15 @@ from django.contrib.auth import views as auth_views
 from rest_framework.authtoken.views import obtain_auth_token
 from pathlib import Path
 
-
+# --- Health check ---
 def root_view(request):
-    return JsonResponse({"message": "API běží"})
+    return JsonResponse({
+        "status": "ok",
+        "api": "v1",
+        "message": "API běží"
+    })
 
-
+# --- Serve React build ---
 def serve_react(request):
     index_file = settings.BASE_DIR.parent / "frontend" / "build" / "index.html"
     try:
@@ -27,10 +31,10 @@ def serve_react(request):
     except FileNotFoundError:
         return HttpResponse("❌ React build not found", status=404)
 
-
 urlpatterns = [
     # --- API ---
     path("api/", root_view),
+    path("api/health/", health),
     path("api/vypocet/", vypocet),
     path("api/ulozeny_plan/", ulozeny_plan),
     path("api/ulozit_z_existujiciho/", ulozit_z_existujiciho),
@@ -48,20 +52,25 @@ urlpatterns = [
     path("login/", auth_views.LoginView.as_view(template_name="login.html")),
     path("logout/", auth_views.LogoutView.as_view(next_page="/login/")),
 
-    # --- Admin Django ---
+    # --- Django admin ---
     path("admin/", admin.site.urls),
 ]
+
+# --- Media files in DEBUG ---
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.BASE_DIR / "frontend" / "public" / "media")
-# статические (для DEBUG)
-# === 1) СТАТИКА REACT ===
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )
+
+# --- Static React files in DEBUG ---
 if settings.DEBUG:
     urlpatterns += static(
         settings.STATIC_URL,
         document_root=settings.BASE_DIR.parent / "frontend" / "build" / "static"
     )
 
-# --- React SPA CATCH-ALL (должен быть САМЫМ ПОСЛЕДНИМ!) ---
+# --- React SPA catch-all (must be last) ---
 urlpatterns += [
     re_path(r"^(?!api|admin|media).*", serve_react),
 ]

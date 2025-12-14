@@ -451,3 +451,7 @@ def ulozit_z_existujiciho(request):
         "plan_id": new_plan.id,
         "saved": True
     })
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def health(request):
+    return Response({"status": "ok"})
