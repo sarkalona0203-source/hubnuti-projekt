@@ -32,8 +32,7 @@ export default function JidlaPage() {
   const numericPrice = Number(price).toFixed(2);
   const numericReadyPrice = Number(readyPrice).toFixed(2);
 
-  // Используем getImageUrl
-  const imageUrl = getImageUrl(jidlo.obrazek);
+  const imageUrl = getImageUrl(jidlo.obrazek_url);
 
   if (existing) {
     setCart(

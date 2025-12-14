@@ -74,7 +74,7 @@ class Jidlo(models.Model):
     carbs = models.FloatField(default=0.0, editable=False)
     type = models.CharField(max_length=20, choices=TYPY)
     preparation = models.TextField()
-    obrazek = models.ImageField(upload_to='jidla/', blank=True, null=True)
+    obrazek_url = models.CharField(max_length=255, blank=True, null=True)
     price = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
 
     def __str__(self):

@@ -231,13 +231,13 @@ export default function Kalkulacka() {
                 <strong>{typyMap[j.type] ?? j.type}:</strong> {j.name} ({j.calories} kcal)
                 {j.price && <span className="jidlo-price"> — {j.price} Kč</span>}
 
-                {j.obrazek && (
+                {j.obrazek_url && (
   <img
-    src={getImageUrl(j.obrazek)}
+    src={getImageUrl(j.obrazek_url)}
     alt={j.name}
     onError={(e) => (e.target.src = getImageUrl(null))}
     className="jidlo-img"
-  />  
+  />
 )}
                 {j.preparation && <p className="preparation">{j.preparation}</p>}
 

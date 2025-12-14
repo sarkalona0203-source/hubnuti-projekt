@@ -21,7 +21,7 @@ export default function JidloCard({ jidlo, onAdd }) {
   return (
   <div className="jidlo-card card">
     <img
-      src={getImageUrl(jidlo.obrazek)}
+      src={getImageUrl(jidlo.obrazek_url)}
       alt={jidlo.name}
       className="jidlo-img"
       loading="lazy"
