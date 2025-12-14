@@ -34,25 +34,20 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 class JidloSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientSerializer(many=True, read_only=True)
-    # 🔹 значения, вычисленные в queryset через annotate()
-    price_value = serializers.FloatField(read_only=True)
-    ready_price_value = serializers.FloatField(read_only=True)
-
-    # SerializerMethodField для корректного URL картинки
-    obrazek_url = serializers.SerializerMethodField(method_name="get_obrazek_url")
+    obrazek_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Jidlo
         fields = [
             "id", "name", "type", "calories", "protein", "fat", "carbs",
-            "preparation", "ingredients", "price_value", "ready_price_value",
-            "obrazek_url"
+            "preparation", "ingredients", "obrazek_url"
         ]
 
     def get_obrazek_url(self, obj):
         request = self.context.get("request")
         if obj.obrazek_url:
-            url = obj.obrazek_url
+            # Формируем полный URL
+            url = f"/media/{obj.obrazek_url}"  # добавляем MEDIA_URL вручную
             if request:
                 url = request.build_absolute_uri(url)
             return url
