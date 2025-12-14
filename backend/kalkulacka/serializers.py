@@ -46,11 +46,10 @@ class JidloSerializer(serializers.ModelSerializer):
     def get_obrazek_url(self, obj):
         request = self.context.get("request")
         if obj.obrazek_url:
-            # Формируем полный URL
-            url = f"/media/{obj.obrazek_url}"  # добавляем MEDIA_URL вручную
+            url = obj.obrazek_url.lstrip("/")  # убираем ведущий /
             if request:
-                url = request.build_absolute_uri(url)
-            return url
+                return request.build_absolute_uri(f"/media/{url}")
+            return f"/media/{url}"
         return None
     def get_price(self, obj):
         total_price = sum(
