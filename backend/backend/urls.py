@@ -12,7 +12,8 @@ from kalkulacka.views_user import profile_detail, profile_edit
 from kalkulacka.views_admin import admin_dashboard
 from django.contrib.auth import views as auth_views
 from rest_framework.authtoken.views import obtain_auth_token
-from pathlib import Path
+
+
 
 # --- Health check ---
 def root_view(request):
@@ -74,3 +75,5 @@ if settings.DEBUG:
 urlpatterns += [
     re_path(r"^(?!api|admin|media).*", serve_react),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

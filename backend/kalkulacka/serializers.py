@@ -35,12 +35,16 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 class JidloSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientSerializer(many=True, read_only=True)
     obrazek_url = serializers.SerializerMethodField()
+    price_value  = serializers.SerializerMethodField()
+    ready_price_value = serializers.SerializerMethodField()
 
     class Meta:
         model = Jidlo
         fields = [
             "id", "name", "type", "calories", "protein", "fat", "carbs",
-            "preparation", "ingredients", "obrazek_url"
+            "preparation", "ingredients", "obrazek_url",
+            "price_value",       # ✅ добавлено
+            "ready_price_value", # ✅ добавлено
         ]
 
     def get_obrazek_url(self, obj):
@@ -51,18 +55,16 @@ class JidloSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(f"/media/{url}")
             return f"/media/{url}"
         return None
-    def get_price(self, obj):
-        total_price = sum(
+
+    def get_price_value(self, obj):
+        total = sum(
             (ri.ingredient.price or 0) * (ri.amount / 100)
             for ri in obj.ingredients.all()
         )
-        return round(total_price, 2)
+        return round(total, 2)
 
-    def get_total_price(self, obj):
-        if hasattr(obj, "total_price") and obj.total_price is not None:
-            return round(float(obj.total_price), 2)
-        return self.get_price(obj)
-
+    def get_ready_price_value(self, obj):
+        return round(self.get_price_value(obj) * 2, 2)
 
 class MealItemSerializer(serializers.ModelSerializer):
     jidlo = serializers.SerializerMethodField()
