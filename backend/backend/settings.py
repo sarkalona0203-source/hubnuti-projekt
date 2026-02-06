@@ -127,13 +127,14 @@ FRONTEND_URL = os.getenv(
 
 CORS_ALLOWED_ORIGINS = [
     FRONTEND_URL,  # production
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+    "https://hubnuti-projekt-16.onrender.com",  # разрешаем продакшн адрес
 ]
 CSRF_TRUSTED_ORIGINS = [
     FRONTEND_URL,
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ["*"]

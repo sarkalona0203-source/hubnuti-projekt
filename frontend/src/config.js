@@ -6,7 +6,7 @@ export const MEDIA_URL =
   process.env.REACT_APP_MEDIA_URL || "/media";
 
 export const getImageUrl = (obrazek_url) => {
-  const fallback = `${MEDIA_URL.replace(/\/$/, "")}/jidla/fallback.jpg`;
+  const fallback = `${MEDIA_URL.replace(/\/$/, "")}/fallback.jpg`;
 
   if (!obrazek_url) return fallback;
 
