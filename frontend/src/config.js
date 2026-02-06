@@ -2,8 +2,9 @@
 export const API_URL =
   process.env.REACT_APP_API_URL || "https://hubnuti-projekt-16.onrender.com/api";
 
+// MEDIA_URL должен указывать на **тот же домен, что и API**
 export const MEDIA_URL =
-  process.env.REACT_APP_MEDIA_URL || "/media";
+  process.env.REACT_APP_MEDIA_URL || "https://hubnuti-projekt-16.onrender.com/media";
 
 export const getImageUrl = (obrazek_url) => {
   const fallback = `${MEDIA_URL.replace(/\/$/, "")}/fallback.jpg`;
