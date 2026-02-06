@@ -38,7 +38,7 @@ INSTALLED_APPS = [
 # ========================
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "corsheaders.middleware.CorsMiddleware",  # сразу после SecurityMiddleware
+    "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -48,6 +48,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "kalkulacka.middleware.RoleRedirectMiddleware",
 ]
+
 
 ROOT_URLCONF = "backend.urls"
 
@@ -85,14 +86,16 @@ DATABASES = {
 }
 
 # ========================
-# Static & Media
+# Static files (CSS, JS)
 # ========================
+
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [
-    BASE_DIR.parent / "frontend" / "build" / "static",
-]
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
 
 
 
@@ -119,8 +122,12 @@ LOGOUT_REDIRECT_URL = "/login/"
 # ========================
 # CORS & CSRF
 # ========================
+# ========================
+# Media files (images, uploads)
+# ========================
+
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR.parent / "frontend" / "public" / "media"
+MEDIA_ROOT = BASE_DIR / "media"
 FRONTEND_URL = os.getenv(
     "FRONTEND_URL", "https://hubnuti-projekt-15.onrender.com"
 )
@@ -135,6 +142,9 @@ CSRF_TRUSTED_ORIGINS = [
     FRONTEND_URL,
     "http://localhost:3001",
     "http://127.0.0.1:3001",
+]
+STATICFILES_DIRS = [
+    BASE_DIR.parent / "frontend" / "build" / "static",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ["*"]

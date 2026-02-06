@@ -1,8 +1,9 @@
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 from django.conf.urls.static import static
+
 from kalkulacka.views_api import (
     vypocet, ulozeny_plan, ulozit_z_existujiciho,
     vsechna_jidla, get_progress, add_progress,
@@ -14,7 +15,6 @@ from django.contrib.auth import views as auth_views
 from rest_framework.authtoken.views import obtain_auth_token
 
 
-
 # --- Health check ---
 def root_view(request):
     return JsonResponse({
@@ -22,6 +22,7 @@ def root_view(request):
         "api": "v1",
         "message": "API běží"
     })
+
 
 # --- Serve React build ---
 def serve_react(request):
@@ -31,6 +32,7 @@ def serve_react(request):
             return HttpResponse(f.read())
     except FileNotFoundError:
         return HttpResponse("❌ React build not found", status=404)
+
 
 urlpatterns = [
     # --- API ---
@@ -57,23 +59,14 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 ]
 
-# --- Media files in DEBUG ---
+# --- MEDIA: только при DEBUG ---
 if settings.DEBUG:
     urlpatterns += static(
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT
     )
 
-# --- Static React files in DEBUG ---
-if settings.DEBUG:
-    urlpatterns += static(
-        settings.STATIC_URL,
-        document_root=settings.BASE_DIR.parent / "frontend" / "build" / "static"
-    )
-
-# --- React SPA catch-all (must be last) ---
+# --- React SPA catch-all (СТРОГО ПОСЛЕДНИЙ) ---
 urlpatterns += [
-    re_path(r"^(?!api|admin|media).*", serve_react),
+    re_path(r"^.*$", serve_react),
 ]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
