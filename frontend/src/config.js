@@ -8,8 +8,7 @@ export const MEDIA_URL =
   API_URL.replace(/\/api$/, "") + "/media";
 
 export const getImageUrl = (obrazek_url) => {
-  if (!obrazek_url) return null; // просто возвращаем null
+  if (!obrazek_url) return null;
   if (obrazek_url.startsWith("http")) return obrazek_url;
-  const clean = obrazek_url.replace(/^\/+/, "");
-  return `${MEDIA_URL}/${clean}`;
+  return `/media/${obrazek_url}`; // путь относительно public
 };
