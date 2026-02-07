@@ -233,12 +233,14 @@ export default function Kalkulacka() {
 
                 {j.obrazek_url && (
   <img
-    src={getImageUrl(j.obrazek_url)}
-    alt={j.name}
-    onError={(e) => (e.target.src = getImageUrl(null))}
-    className="jidlo-img"
-  />
-)}
+  src={getImageUrl(j.obrazek_url)}
+  alt={j.name}
+  className="jidlo-img"
+  onError={(e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = "/fallback.jpg";
+  }}
+/>               )} 
                 {j.preparation && <p className="preparation">{j.preparation}</p>}
 
                 {j.ingredients?.length > 0 && (
