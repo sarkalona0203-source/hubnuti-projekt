@@ -11,10 +11,8 @@ export const MEDIA_URL =
 const FALLBACK_IMAGE = "/fallback.jpg";
 
 export const getImageUrl = (obrazek_url) => {
-  if (!obrazek_url) return FALLBACK_IMAGE;
-
+  if (!obrazek_url) return null; // просто возвращаем null
   if (obrazek_url.startsWith("http")) return obrazek_url;
-
   const clean = obrazek_url.replace(/^\/+/, "");
   return `${MEDIA_URL}/${clean}`;
 };

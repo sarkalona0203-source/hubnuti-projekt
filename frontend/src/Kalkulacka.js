@@ -228,43 +228,45 @@ export default function Kalkulacka() {
           <ul style={{ listStyle: "none", paddingLeft: 0 }}>
             {denneJidla.map((j, i) => (
               <li key={i} className="jidlo-item">
-                <strong>{typyMap[j.type] ?? j.type}:</strong> {j.name} ({j.calories} kcal)
-                {j.price && <span className="jidlo-price"> — {j.price} Kč</span>}
+  <strong>{typyMap[j.type] ?? j.type}:</strong> {j.name} ({j.calories} kcal)
+  {j.price && <span className="jidlo-price"> — {j.price} Kč</span>}
 
-                {j.obrazek_url && (
-  <img
-  src={getImageUrl(j.obrazek_url)}
-  alt={j.name}
-  className="jidlo-img"
-  onError={(e) => {
-    e.currentTarget.onerror = null; // предотвращаем цикл
-    e.currentTarget.src = getImageUrl(null); // fallback через config.js
-  }}
-/>              )}
-                {j.preparation && <p className="preparation">{j.preparation}</p>}
+  {j.obrazek_url && (
+    <img
+      src={getImageUrl(j.obrazek_url)}
+      alt={j.name}
+      className="jidlo-img"
+      onError={(e) => {
+        e.currentTarget.onerror = null;
+        e.currentTarget.style.display = "none";
+      }}
+    />
+  )}
 
-                {j.ingredients?.length > 0 && (
-                  <>
-                    <button
-                      onClick={() => toggleIngredients(den, i)}
-                      className="toggle-ingredients"
-                    >
-                      {openIngredients[`${den}-${i}`]
-                        ? "🔽 Skrýt ingredience"
-                        : "🔽 Zobrazit ingredience"}
-                    </button>
-                    {openIngredients[`${den}-${i}`] && (
-                      <ul className="ingredients-list">
-                        {j.ingredients.map((ing, idx) => (
-                          <li key={idx}>
-                            {ing.ingredient_name} – {ing.amount} {ing.unit}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </>
-                )}
-              </li>
+  {j.preparation && <p className="preparation">{j.preparation}</p>}
+
+  {j.ingredients?.length > 0 && (
+    <>
+      <button
+        onClick={() => toggleIngredients(den, i)}
+        className="toggle-ingredients"
+      >
+        {openIngredients[`${den}-${i}`]
+          ? "🔽 Skrýt ingredience"
+          : "🔽 Zobrazit ingredience"}
+      </button>
+      {openIngredients[`${den}-${i}`] && (
+        <ul className="ingredients-list">
+          {j.ingredients.map((ing, idx) => (
+            <li key={idx}>
+              {ing.ingredient_name} – {ing.amount} {ing.unit}
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  )}
+</li>
             ))}
           </ul>
         </div>
