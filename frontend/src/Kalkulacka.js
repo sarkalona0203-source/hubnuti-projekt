@@ -237,10 +237,10 @@ export default function Kalkulacka() {
   alt={j.name}
   className="jidlo-img"
   onError={(e) => {
-    e.currentTarget.onerror = null;
-    e.currentTarget.src = "/fallback.jpg";
+    e.currentTarget.onerror = null; // предотвращаем цикл
+    e.currentTarget.src = getImageUrl(null); // fallback через config.js
   }}
-/>               )} 
+/>              )}
                 {j.preparation && <p className="preparation">{j.preparation}</p>}
 
                 {j.ingredients?.length > 0 && (
