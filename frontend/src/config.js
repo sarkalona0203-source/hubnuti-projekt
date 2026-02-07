@@ -7,9 +7,6 @@ export const MEDIA_URL =
   process.env.REACT_APP_MEDIA_URL ||
   API_URL.replace(/\/api$/, "") + "/media";
 
-// 🔥 fallback — фронтендовый файл
-const FALLBACK_IMAGE = "/fallback.jpg";
-
 export const getImageUrl = (obrazek_url) => {
   if (!obrazek_url) return null; // просто возвращаем null
   if (obrazek_url.startsWith("http")) return obrazek_url;
