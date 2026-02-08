@@ -1,4 +1,5 @@
 import React from "react";
+import { getImageUrl } from "./config"; // 🔥 добавляем
 
 export default function Cart({ cart, onRemove, deliveryFee = 0 }) {
   const total = cart.reduce(
@@ -17,9 +18,10 @@ export default function Cart({ cart, onRemove, deliveryFee = 0 }) {
         {cart.map(item => (
           <li key={item.id} className="flex justify-between py-1 items-center">
             <img
-              src={item.image}
+              src={getImageUrl(item.image)} // 🔥 используем getImageUrl
               alt={item.name}
               style={{ width: 60, height: 60, borderRadius: 5, objectFit: "cover" }}
+              onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.style.display = "none"; }} // скрывать если не загрузилось
             />
             <div>
               <div>
