@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./kalkulacka.css";
-import { API_URL, getImageUrl } from "./config";
+import { API_URL } from "./config";
 
 const INITIAL_FORM = {
   vaha: "",
