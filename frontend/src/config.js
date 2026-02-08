@@ -6,5 +6,6 @@ export const API_URL =
 export const getImageUrl = (obrazek_url) => {
   if (!obrazek_url) return null;
   if (obrazek_url.startsWith("http")) return obrazek_url; // полный URL уже есть
-  return `/media/${obrazek_url.replace(/^\/+/, "")}`; // просто public/media
+  // полный путь к продакшен-бекенду, где реально лежат медиа
+  return `https://hubnuti-projekt-15.onrender.com/media/${obrazek_url.replace(/^\/+/, "")}`;
 };
