@@ -126,8 +126,6 @@ LOGOUT_REDIRECT_URL = "/login/"
 # Media files (images, uploads)
 # ========================
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
 FRONTEND_URL = os.getenv(
     "FRONTEND_URL", "https://hubnuti-projekt-15.onrender.com"
 )

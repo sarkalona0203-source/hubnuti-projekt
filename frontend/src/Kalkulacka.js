@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./kalkulacka.css";
-import { API_URL } from "./config";
+import { API_URL, getImageUrl } from "./config";
 
 const INITIAL_FORM = {
   vaha: "",
@@ -233,7 +233,7 @@ export default function Kalkulacka() {
 
   {j.obrazek_url && (
   <img
-    src={`/media/${j.obrazek_url}`}
+    src={getImageUrl(j.obrazek_url)}
     alt={j.name}
     className="jidlo-img"
     onError={(e) => {
