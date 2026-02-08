@@ -3,7 +3,8 @@ import Filters from "./Filters";
 import JidloCard from "./JidloCard";
 import Cart from "./Cart";
 import "./JidlaPage.css";
-import { API_URL, getImageUrl } from "./config";
+import { API_URL } from "./config";
+
 export default function JidlaPage() {
   const [jidla, setJidla] = useState([]);
   const [filters, setFilters] = useState({});
@@ -18,7 +19,6 @@ export default function JidlaPage() {
     });
 
     const url = `${API_URL}/vsechna_jidla/?${params.toString()}`;
-
     fetch(url)
       .then((res) => res.json())
       .then(setJidla)
@@ -26,39 +26,39 @@ export default function JidlaPage() {
   }, [filters]);
 
   const handleAddToCart = (jidlo, type, price, readyPrice) => {
-  const id = `${jidlo.id}-${type}`;
-  const existing = cart.find((item) => item.id === id);
+    const id = `${jidlo.id}-${type}`;
+    const existing = cart.find((item) => item.id === id);
 
-  const numericPrice = Number(price).toFixed(2);
-  const numericReadyPrice = Number(readyPrice).toFixed(2);
+    const numericPrice = Number(price).toFixed(2);
+    const numericReadyPrice = Number(readyPrice).toFixed(2);
 
-  const imageUrl = getImageUrl(jidlo.obrazek_url);
+    // Картинки грузим с фронта
+    const imageUrl = jidlo.obrazek_url ? `/media/${jidlo.obrazek_url}` : null;
 
-  if (existing) {
-    setCart(
-      cart.map((item) =>
-        item.id === id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      )
-    );
-  } else {
-    setCart([
-      ...cart,
-      {
-        id,
-        name: jidlo.name,
-        type,
-        price: numericPrice,
-        readyPrice: numericReadyPrice,
-        quantity: 1,
-        protein: jidlo.protein,
-        calories: jidlo.calories,
-        image: imageUrl,
-      },
-    ]);
-  }
-};
+    if (existing) {
+      setCart(
+        cart.map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        )
+      );
+    } else {
+      setCart([
+        ...cart,
+        {
+          id,
+          name: jidlo.name,
+          type,
+          price: numericPrice,
+          readyPrice: numericReadyPrice,
+          quantity: 1,
+          protein: jidlo.protein,
+          calories: jidlo.calories,
+          image: imageUrl,
+        },
+      ]);
+    }
+  };
+
   const handleRemoveFromCart = (id) =>
     setCart((prev) => prev.filter((item) => item.id !== id));
 

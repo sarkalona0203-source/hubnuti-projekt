@@ -1,12 +1,10 @@
 // config.js
-
 export const API_URL =
-  process.env.REACT_APP_API_URL || "http://localhost:8000/api";
+  process.env.REACT_APP_API_URL || "https://hubnuti-projekt-15.onrender.com/api";
 
+// getImageUrl для фронта — берём из public/media
 export const getImageUrl = (obrazek_url) => {
   if (!obrazek_url) return null;
-  if (obrazek_url.startsWith("http")) return obrazek_url;
-
-  // картинки ТОЛЬКО из frontend/public/media
-  return `/media/${obrazek_url.replace(/^\/+/, "")}`;
+  if (obrazek_url.startsWith("http")) return obrazek_url; // полный URL уже есть
+  return `/media/${obrazek_url.replace(/^\/+/, "")}`; // просто public/media
 };
